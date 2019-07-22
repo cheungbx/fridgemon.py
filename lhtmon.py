@@ -1,17 +1,11 @@
-# ESP32 iot humdity temperature sensor with LED switch and pump switch , MQTT and  NTP time.
-# Summary of all the GPIO pins used
-# -----------------------------------
-#          LedPin          16        // to control the LED grow light
-#          PumpPin         17        // to control the Nutrient water pump or Air Pump or Fogger/mist maker
-#          DHTPIN          19        // humidity and air temperature sensor
-#          ONE_WIRE_BUS    18        // water temperature sensor
-#          EcPin           36        // EC Meter, GPIO 36 SVP
-#          EcPwrPin        32        // +Ve power for EC meter, only turned on during measurement to avoid corrsision of probe. Measures > 5 sec apart.
-#          EcGndPin        23        // -Ve power for EC meter, only turned on during measurement to avoid corrsision of probe. Measures > 5 sec apart.
-#          Btn2Pin         25        // manual push button to switch the pump on/off
-#          Btn1Pin         27        // manual push button to switch the LED growlight  on/off
-#          i2cSDA          21        // I2C interface shared by both OLED and light meter
-#          i2cSCL          22        // I2C interface shared by  both OLED and light meter
+# ESP8266 iot humdity temperature sensor with LED switch and pump switch , MQTT and  NTP time.
+# GPIO4 aka D2 for SDA of I2C OLED SSD1306 
+# GPIO5 aka D1 for SCL of I2C OLED SSD1306 
+# Btn1Pin  12    // D6 - button 1 for LED 
+# DHTPIN   13    // D7 data pin for the humidity sensor
+# LedPin   14    // D5   LED output pin 
+# Btn2Pin  2     // D4 - button 2 for pump
+# PumpPin  0     // D3 - Pump output pin
 import machine
 import network
 import time
@@ -93,7 +87,7 @@ def cb(topic, msg):
             pump.on()
             pumpOn = False
 
-i2c = I2C(-1, Pin(22), Pin(21))   # SCL, SDA
+i2c = I2C(-1, Pin(5), Pin(4))   # SCL, SDA
 display = ssd1306.SSD1306_I2C(128, 64, i2c)
         
 # WiFi connection information
@@ -150,10 +144,10 @@ h0 = 1.0
 t = 28.3
 t0 = 1.0
 
-led = Pin(16, Pin.OUT)
-pump = Pin(17, Pin.OUT)
-btn1 = Pin(27, Pin.IN, Pin.PULL_UP)
-btn2 = Pin(25, Pin.IN, Pin.PULL_UP)
+led = Pin(14, Pin.OUT)
+pump = Pin(0, Pin.OUT)
+btn1 = Pin(12, Pin.IN, Pin.PULL_UP)
+btn2 = Pin(2, Pin.IN, Pin.PULL_UP)
 # publish humidity and airtemp to Adafruit IO using MQTT
 # subscribe to the led2 feed
 #
@@ -170,7 +164,7 @@ connect_and_subscribe()
 
 
 # pin for DHT sensor
-dhtSensor = DHT11(Pin(19, Pin.IN, Pin.PULL_UP))
+dhtSensor = DHT11(Pin(13, Pin.IN, Pin.PULL_UP))
 
 
 
